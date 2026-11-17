@@ -1,0 +1,12 @@
+#!/bin/sh
+# This repo works on main only (see .githooks/README.md): push main, nothing else.
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -z "$(printf '%s' "$local_sha" | tr -d 0)" ] && continue   # deleting a branch on GitHub is fine
+  case "$remote_ref" in
+    refs/heads/main|refs/tags/*) ;;
+    *) echo "This repo works on main only: not pushing ${remote_ref#refs/heads/}." >&2
+       echo "Switch to main (git switch main) and push that." >&2
+       exit 1 ;;
+  esac
+done
+exit 0

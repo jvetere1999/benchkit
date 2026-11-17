@@ -1,0 +1,41 @@
+name: CI
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ hashFiles('library.json', 'extras/dev/platformio.ini') }}
+      - run: pip install platformio
+      - name: Native tests (fake Arduino)
+        run: cd extras/dev && pio test -e native
+      - name: Demo and every class, Uno and Mega
+        run: cd extras/dev && pio run
+      - name: Examples, Uno
+        run: |
+          for d in examples/*/; do
+            n=$(basename "$d")
+            echo "::group::$n"
+            pio ci "$d$n.ino" --lib=. -b uno \
+              -O "lib_deps=adafruit/Adafruit ST7735 and ST7789 Library, adafruit/Adafruit GFX Library, adafruit/Adafruit BusIO, SPI, Wire"
+            echo "::endgroup::"
+          done
+      - name: Versions agree
+        run: |
+          a=$(python -c "import json;print(json.load(open('library.json'))['version'])")
+          b=$(sed -n 's/^version=//p' library.properties)
+          c=$(sed -n 's/^#define BENCHKIT_VERSION "\(.*\)"/\1/p' src/Benchkit.h)
+          echo "library.json $a, library.properties $b, Benchkit.h $c"
+          [ "$a" = "$b" ] && [ "$a" = "$c" ]
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then [ "v$a" = "${GITHUB_REF_NAME}" ]; fi

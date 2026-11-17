@@ -1,0 +1,7 @@
+{
+  "name": "fake_arduino",
+  "version": "1.0.0",
+  "description": "Native tests only: a fake Arduino.h / Wire.h with pins, analog values and time as variables.",
+  "frameworks": "*",
+  "platforms": "native"
+}
