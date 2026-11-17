@@ -2,6 +2,7 @@
 //
 //   Ssd1306 oled;                        // 128 x 64 (1 KB of RAM). Ssd1306x32 for 128 x 32 (512 B)
 //   void setup() { oled.begin(); }       // finds it at 0x3C or 0x3D; false if nothing answers
+//   oled.begin(0, OLED_RST);             // with a reset pin (e.g. Adafruit #326's Rst): pulsed first
 //   void loop()  { oled.text(0, 0, F("Hi"), OLED_ON, OLED_OFF); oled.show(); }
 //
 // Drawing (text, lines, circles, bars, sprites) comes from gfx.h and only changes the buffer in
@@ -19,6 +20,7 @@
 // The I2C part, not a template (one copy for every size)
 namespace ssd1306 {
 bool present(uint8_t addr);
+void reset(uint8_t pin);   // pulse a reset pin low, leave it high
 void commands(uint8_t addr, const uint8_t *list, uint8_t n);   // list in flash
 void command(uint8_t addr, uint8_t c);
 void commandsNow(uint8_t addr, const uint8_t *ram, uint8_t n);   // several, one transmission
@@ -32,8 +34,10 @@ public:
   static const uint8_t W = 128, PAGES = H / 8;
   Ssd1306T() { for (uint8_t p = 0; p < PAGES; p++) { lo[p] = 255; hi[p] = 0; } }
 
-  // address 0 = try 0x3C, then 0x3D. Returns false if no OLED answers (check SDA/SCL/power).
-  bool begin(uint8_t address = 0) {
+  // address 0 = try 0x3C, then 0x3D. resetPin: the board's Rst pin, if it's wired to one.
+  // Returns false if no OLED answers (check SDA/SCL/power, and the I2C jumpers on some boards).
+  bool begin(uint8_t address = 0, int8_t resetPin = -1) {
+    if (resetPin >= 0) ssd1306::reset((uint8_t)resetPin);
     addr = address ? address : ssd1306::present(0x3C) ? 0x3C : 0x3D;
     if (!ssd1306::present(addr)) return false;
     ssd1306::init(addr, H);

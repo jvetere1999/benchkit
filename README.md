@@ -28,13 +28,17 @@ void loop() {
 **PlatformIO** (`platformio.ini`):
 
 ```ini
-lib_deps = https://github.com/jvetere1999/benchkit.git#v1.0.0
+lib_deps = https://github.com/jvetere1999/benchkit.git#v1.1.0
 ```
 
 **Arduino IDE:** download the ZIP from the [releases](https://github.com/jvetere1999/benchkit/releases)
 (or *Code → Download ZIP*), then *Sketch → Include Library → Add .ZIP Library*. Install
 *Adafruit ST7735 and ST7789 Library* too (it brings Adafruit GFX and BusIO); only `St7735` uses
 it, and without it everything else still works.
+
+Two parts need a library of their own, and are only built when it's there (add it to
+`lib_deps`, or install it in the Arduino IDE): `Nrf24` needs **RF24** (`nrf24/RF24`) and
+`PixelRing` needs **Adafruit NeoPixel** (`adafruit/Adafruit NeoPixel`).
 
 ## Parts
 
@@ -58,6 +62,10 @@ it, and without it everything else still works.
 | `seg7` | `Seg7`, `Seg7x4`, `segmentsFor()` | 1-digit and 4-digit 7-segment displays |
 | `pulse` | `Pulse` | on/off timing used by `led`, `sound` |
 | `stamp` | `stamp()` | `[m:ss.mmm]` at the start of serial lines |
+| `screenlog` | `ScreenLog<cols, rows>`, `LogRows` | a serial log that also keeps its last lines, for a screen |
+| `nrf24` | `Nrf24`, `AckHistory` | nRF24L01 / nRF24L01+ (PA+LNA too) radio: send with acknowledgements, receive, signal level, channel scan |
+| `servo_t1` | `Timer1Servo`, `ServoJog` | a servo on Timer1's hardware PWM (no twitching), moved by a joystick |
+| `pixelring` | `PixelRing<n>`, `ringStep`, `ringDistance256`, `ringShade` | NeoPixel ring or strip (RGB / RGBW), sends only when a colour changed |
 
 Each header in [`src/benchkit/`](src/benchkit) starts with an example and the wiring, and
 [`examples/`](examples) has a sketch per part. With PlatformIO you can include one part on its
@@ -67,21 +75,22 @@ Things that take time (flash, blink, tunes, ramps, steps, multiplexing) have an 
 call every loop. Two exceptions, said in their headers: `HcSr04` waits for its echo (~12 ms) and
 `Dht11` takes ~25 ms once a second.
 
-For a NeoPixel ring, IR remote or nRF24 radio, use Adafruit_NeoPixel, IRremote and RF24.
+For an IR remote, use IRremote.
 
 ## Costs
 
 Unused functions are dropped when linking, nothing is `virtual` (the displays share drawing
 through a template), and extras such as `DoubleTap` are separate objects you only pay for if you
 make one. RAM is per object: an `Ssd1306` is a 1 KB screen buffer (`Ssd1306x32`: 512 B), a
+`PixelRing<24>` 96 bytes plus the NeoPixel library's own, a `ScreenLog<26, 9>` about 250 bytes, a
 `Shift595<2>` 4 bytes, most others under 20 bytes. Fonts, tunes and sprites stay in flash.
 
 ## Developing
 
 ```sh
 cd extras/dev
-pio test -e native     # 54 tests on the computer, against a fake Arduino (extras/dev/fakelib)
-pio run                # a demo, and every class built for an Uno and a Mega
+pio test -e native     # 62 tests on the computer, against a fake Arduino (extras/dev/fakelib)
+pio run                # a demo, and every class built for an Uno and a Mega (all/, more/)
 ```
 
 CI runs both and compiles every example. To release: bump the version in `library.json`,

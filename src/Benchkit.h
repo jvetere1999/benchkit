@@ -12,7 +12,7 @@
 // Every header in src/benchkit/ starts with an example and the wiring.
 #pragma once
 
-#define BENCHKIT_VERSION "1.0.0"
+#define BENCHKIT_VERSION "1.1.0"
 
 #include "benchkit/button.h"
 #include "benchkit/joystick.h"
@@ -30,6 +30,10 @@
 #include "benchkit/gfx.h"
 #include "benchkit/ssd1306.h"
 #include "benchkit/lcd1602.h"
+#include "benchkit/screenlog.h"
+#include "benchkit/servo_t1.h"
+#include "benchkit/pixelring.h"   // PixelRing needs adafruit/Adafruit NeoPixel; the ring maths don't
+#include "benchkit/nrf24.h"       // Nrf24 needs nrf24/RF24; AckHistory doesn't
 
 #ifndef NATIVE_TEST
 #include "benchkit/stamp.h"

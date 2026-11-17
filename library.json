@@ -1,8 +1,8 @@
 {
   "name": "Benchkit",
-  "version": "1.0.0",
-  "description": "One small class per hobby-electronics part: buttons, joysticks, LEDs, buzzers, sensors (pot, LDR, TMP36, thermistor, Sharp IR, HC-SR04, DHT11), motors, 28BYJ-48 stepper, relays, 74HC595, 7-segment displays, and ST7735 / SSD1306 / 16x2 LCD screens. Pins passed in at begin(), no delay(), nothing virtual.",
-  "keywords": "button, joystick, led, buzzer, sensor, motor, stepper, relay, 74hc595, 7-segment, st7735, ssd1306, lcd1602, dht11, hc-sr04",
+  "version": "1.1.0",
+  "description": "One small class per hobby-electronics part: buttons, joysticks, LEDs, buzzers, sensors (pot, LDR, TMP36, thermistor, Sharp IR, HC-SR04, DHT11), motors, 28BYJ-48 stepper, relays, 74HC595, 7-segment displays, ST7735 / SSD1306 / 16x2 LCD screens, nRF24L01 radios, NeoPixel rings and a jitter-free Timer1 servo. Pins passed in at begin(), no delay(), nothing virtual.",
+  "keywords": "button, joystick, led, buzzer, sensor, motor, stepper, relay, 74hc595, 7-segment, st7735, ssd1306, lcd1602, dht11, hc-sr04, nrf24l01, neopixel, servo",
   "repository": {"type": "git", "url": "https://github.com/jvetere1999/benchkit.git"},
   "authors": [{"name": "jvetere1999", "url": "https://github.com/jvetere1999", "maintainer": true}],
   "license": "MIT",

@@ -1,4 +1,5 @@
 #include "ssd1306.h"
+#include <Arduino.h>
 #include <Wire.h>
 
 namespace ssd1306 {
@@ -9,6 +10,16 @@ bool present(uint8_t addr) {
   if (!addr) return false;
   Wire.beginTransmission(addr);
   return Wire.endTransmission() == 0;
+}
+
+void reset(uint8_t pin) {
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, HIGH);
+  delay(1);
+  digitalWrite(pin, LOW);
+  delay(10);
+  digitalWrite(pin, HIGH);
+  delay(1);
 }
 
 void command(uint8_t addr, uint8_t c) {
